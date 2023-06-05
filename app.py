@@ -1,3 +1,4 @@
+#!/usr/bin/python
 ## WhisperingNova
 ## Author: NONAN23x
 ## Project Start Date: 5/6/2023
