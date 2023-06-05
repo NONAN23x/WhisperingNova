@@ -15,8 +15,3 @@ WhisperingNova is an extraordinary project that aims to revolutionize voice modu
 
 ## Applicability
 WhisperingNova falls under the category of Entertainment/Arts, offering a unique and immersive voice transformation experience. Whether you are an aspiring VTuber, an anime enthusiast, or a gamer. WhisperingNova usage is simply a Voice Tranformation Service under fair usage.
-
----
-## Example
-1) asdlkfjaslkdfj
-2) 
