@@ -12,8 +12,15 @@ import json
 import openai
 import pyaudio
 import wave
+import whisper
 
 
+##------------------------------------------------------------------------
+## Setting up OpenAI API Key
+openai.api_key = 'PASTE YOUR OPENAI API KEY HERE'
+
+
+##------------------------------------------------------------------------
 ## Save recorded audio to a file
 def record_audio(filename, duration):
     chunk = 1024
@@ -57,3 +64,9 @@ duration = 5  # in seconds
 record_audio(filename, duration)
 
 
+##------------------------------------------------------------------------
+## Send the Audio file to WhisperAI for  further processing
+
+audio_file= open("requirements.txt", "rb")
+transcript = openai.Audio.transcribe("whisper-1", audio_file)
+print(transcript)

@@ -3,4 +3,5 @@
 requests
 openai
 pyaudio
-
+keyboard
+whisper
