@@ -3,10 +3,10 @@
 ## WhisperingNova
 ## Author: NONAN23x
 ## Project Start Date: 5/6/2023
-###
+##
 
 
-# Import Modules
+## Import Modules
 import requests
 import json
 import openai
@@ -14,6 +14,7 @@ import pyaudio
 import wave
 
 
+## Save recorded audio to a file
 def record_audio(filename, duration):
     chunk = 1024
     format = pyaudio.paInt16
