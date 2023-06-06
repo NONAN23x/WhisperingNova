@@ -161,7 +161,10 @@ print(sentence)
 
 ##------------------------------------------------------------------------
 ## send the text to VoiceVox and recieve japanese output
+##------------------------------------------------------------------------
+## Make Sure Docker is up and RUNNING!!!
 
+# instantiate a audio file
 def speak(sentence):
 
     #specify base url
