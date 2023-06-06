@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# I commited just now Raqeeb
+
 ## WhisperingNova
 ## Author: NONAN23x
 ## Project Start Date: 5/6/2023
