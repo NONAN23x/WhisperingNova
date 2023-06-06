@@ -7,7 +7,7 @@
 
 
 ## Import Modules
-from sys import platform
+import sys
 import os
 import requests
 import json
@@ -27,7 +27,7 @@ if not os.path.exists(path):
 
 ##------------------------------------------------------------------------
 ## Setting up OpenAI API Key
-openai.api_key = 'YOUR OPENAI API KEY HERE'
+openai.api_key = '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'
 
 
 ##------------------------------------------------------------------------
@@ -62,7 +62,7 @@ def record_audio(filename, duration):
 
 # Specify the filename and duration of the recording
 filename = 'output/recorded_audio.wav'
-duration = 7  # in seconds
+duration = 6  # in seconds
 
 # Call the record_audio function
 record_audio(filename, duration)
@@ -72,11 +72,14 @@ record_audio(filename, duration)
 ## Send the Audio file to WhisperAI for  further processing
 
 def processAudio(audio_file):
-    
+    # set the global variable
+    global transcript
     try:
         transcript = openai.Audio.transcribe("whisper-1", audio_file)
     except:
         print("You need a working API Key")
+        print("Exiting...")
+        sys.exit(0)
 
 audio_file = open("output/recorded_audio.wav", "rb")
 
@@ -87,11 +90,8 @@ processAudio(audio_file)
 ##------------------------------------------------------------------------
 ## Try creating a file to save the recorded text
 
-def createTextFile(file):
+def createTextFile(file, transcript):
     try:
-        # Open the file in write mode
-        
-
         # Write the string to the file
         string_to_write = transcript["text"]
         file.write(string_to_write)
@@ -100,20 +100,22 @@ def createTextFile(file):
         file.close()
     except:
         print("There was an error creating your file")
+        print("Exiting...")
+        sys.exit(0)
 
+# Open the file in write mode
 file = open("output/audioTranscription.txt", "w")
 
 # store the recieved transcript in a text file
-createTextFile(file)
-file.close()
+createTextFile(file, transcript)
 
 
 ##------------------------------------------------------------------------
 ## Now send the transcript ot DeepL Translate
 
-def translateToJapanese(file):
-    ## translates
-    print('hello')
+# def translateToJapanese(file):
+#     ## translates
+#     print('hello')
 
-file = open("output/audioTranscription.txt", "r")
-translateToJapanese(file)
+# file = open("output/audioTranscription.txt", "r")
+# translateToJapanese(file)
