@@ -1,5 +1,5 @@
 # WhisperingNova
-An AI voice changer harnessing the power of Whisper AI, DeepL AI, and VoiceVox for seamless voice transformation with a touch of anime flair
+An AI voice changer harnessing the power of Whisper AI, Google Translate, and VoiceVox for seamless voice transformation with a touch of anime flair
 
 ## Purpose
 WhisperingNova is an extraordinary project that aims to revolutionize voice modulation in the realm of anime. It offers a unique and immersive experience by enabling users to effortlessly transform their voices into captivating anime-style renditions
@@ -8,7 +8,7 @@ WhisperingNova is an extraordinary project that aims to revolutionize voice modu
 - Python    (Programming Language)
 - Docker    (Container Service)
 - Whisper AI    (SPEECH to TEXT Engine)
-- DeepL Translator  (Translates English Text to Japanese Text)
+- Google Translator  (Translates English Text to Japanese Text)
 - VoiceVox  (TEXT to SPEECH Engine)
 - Markdown  (Web Markup Language)
 - Git   (Version Control System)
@@ -25,4 +25,7 @@ git clone https://github.com/WhisperingNova
 ```
 pip install -r requirements.txt
 ```
-
+- Attach your OpenAI access token
+```
+openai.api_key = 'YOUR OPENAI API KEY HERE'
+```
