@@ -1,6 +1,5 @@
 # Notes
 
-## pyaudio fix for distros shipping python 3.10
-sudo apt-get install libasound-dev portaudio19-dev libportaudio2 libportaudiocpp0
-sudo apt-get install ffmpeg libav-tools
+## pyaudio build failed issue on linux
+sudo apt-get install libasound-dev portaudio19-dev libportaudio2 libportaudiocpp0 ffmpeg
 sudo pip install pyaudio

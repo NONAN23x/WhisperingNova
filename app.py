@@ -14,7 +14,6 @@ import json
 import openai
 import pyaudio
 import wave
-import whisper
 
 
 ##------------------------------------------------------------------------
@@ -38,21 +37,15 @@ def record_audio(filename, duration):
     format = pyaudio.paInt16
     channels = 1
     rate = 44100
-
     audio = pyaudio.PyAudio()
-
     stream = audio.open(format=format, channels=channels,
                         rate=rate, input=True,
                         frames_per_buffer=chunk)
-
     print("Recording started...")
-
     frames = []
-
     for i in range(int(rate / chunk * duration)):
         data = stream.read(chunk)
         frames.append(data)
-
     print("Recording completed.")
 
     stream.stop_stream()
@@ -80,6 +73,7 @@ record_audio(filename, duration)
 
 audio_file= open("output/recorded_audio.wav", "rb")
 transcript = openai.Audio.transcribe("whisper-1", audio_file)
+
 
 ##------------------------------------------------------------------------
 ## Try creating a file to save the recorded text
