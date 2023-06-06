@@ -1,5 +1,5 @@
 #!/usr/bin/python
-
+# I commited just now Raqeeb
 ## WhisperingNova
 ## Author: NONAN23x
 ## Project Start Date: 5/6/2023
@@ -71,7 +71,7 @@ record_audio(filename, duration)
 ##------------------------------------------------------------------------
 ## Send the Audio file to WhisperAI for  further processing
 
-audio_file= open("output/recorded_audio.wav", "rb")
+audio_file = open("output/recorded_audio.wav", "rb")
 transcript = openai.Audio.transcribe("whisper-1", audio_file)
 
 
