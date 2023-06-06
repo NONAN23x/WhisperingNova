@@ -7,6 +7,8 @@
 
 
 ## Import Modules
+from sys import platform
+import os
 import requests
 import json
 import openai
@@ -16,8 +18,17 @@ import whisper
 
 
 ##------------------------------------------------------------------------
+## Setting up output directory
+workingDirectory = os.getcwd()
+outputDir = 'output'
+path = os.path.join(workingDirectory, outputDir)
+if not os.path.exists(path):
+    os.makedirs(path)
+
+
+##------------------------------------------------------------------------
 ## Setting up OpenAI API Key
-openai.api_key = 'PASTE YOUR OPENAI API KEY HERE'
+openai.api_key = 'YOUR OPENAI API KEY HERE'
 
 
 ##------------------------------------------------------------------------
@@ -57,8 +68,8 @@ def record_audio(filename, duration):
     wf.close()
 
 # Specify the filename and duration of the recording
-filename = 'recorded_audio.wav'
-duration = 5  # in seconds
+filename = 'output/recorded_audio.wav'
+duration = 6  # in seconds
 
 # Call the record_audio function
 record_audio(filename, duration)
@@ -67,6 +78,20 @@ record_audio(filename, duration)
 ##------------------------------------------------------------------------
 ## Send the Audio file to WhisperAI for  further processing
 
-audio_file= open("requirements.txt", "rb")
+audio_file= open("output/recorded_audio.wav", "rb")
 transcript = openai.Audio.transcribe("whisper-1", audio_file)
-print(transcript)
+
+##------------------------------------------------------------------------
+## Try creating a file to save the recorded text
+try:
+    # Open the file in write mode
+    file = open("output/audioTranscription.txt", "w")
+
+    # Write the string to the file
+    string_to_write = transcript["text"]
+    file.write(string_to_write)
+
+    # Close the file
+    file.close()
+except:
+    print("There was an error creating your file")
