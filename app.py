@@ -14,6 +14,10 @@ import json
 import openai
 import pyaudio
 import wave
+import urllib
+import re
+from pydub import AudioSegment
+from pydub.playback import play
 
 
 ##------------------------------------------------------------------------
@@ -27,7 +31,7 @@ if not os.path.exists(path):
 
 ##------------------------------------------------------------------------
 ## Setting up OpenAI API Key
-openai.api_key = 'YOUR OPENAI API KEY'
+openai.api_key = 'YOUR OPENAI API KEY HERE'
 
 
 ##------------------------------------------------------------------------
@@ -69,7 +73,7 @@ def record_audio(filename, duration):
 
 # Specify the filename and duration of the recording
 filename = 'output/recorded_audio.wav'
-duration = 5  # in seconds
+duration = 4  # in seconds
 
 # Call the record_audio function
 record_audio(filename, duration)
@@ -139,8 +143,52 @@ def translate_text(text, source_language, target_language):
     return translation
 
 japaneseText = translate_text(transcript, "English", "Japanese")
-print(japaneseText)
+
+def extract_text(json_data):
+    pattern = r'"text"\s*:\s*"([^"]*)"'
+    match = re.search(pattern, json_data)
+
+    if match:
+        text = match.group(1)
+    else:
+        text = ""
+
+    return text
+
+sentence = extract_text(japaneseText)
+print(sentence)
 
 
 ##------------------------------------------------------------------------
 ## send the text to VoiceVox and recieve japanese output
+
+def speak(sentence):
+
+    #specify base url
+    base_url = "http://127.0.0.1:50021"
+    # generate initial query
+    speaker_id = '14'
+    params_encoded  = urllib.parse.urlencode({'text': sentence, 'speaker': speaker_id})
+    r = requests.post(f'{base_url}/audio_query?{params_encoded}')
+    voicevox_query = r.json()
+    voicevox_query['volumeScale'] = 4.0
+    voicevox_query['intonationScale'] = 1.5
+    voicevox_query['prePhonemeLength'] = 1.0
+    voicevox_query['postPhonemeLength'] = 1.0
+
+    # syntesize voice as wav file
+    params_encoded = urllib.parse.urlencode({'speaker': speaker_id})
+    r = requests.post(f'{base_url}/synthesis?{params_encoded}', json=voicevox_query)
+
+    with open("output/japaneseAudio.wav", 'wb') as outfile:
+        outfile.write(r.content)
+
+speak(sentence)
+
+
+##------------------------------------------------------------------------
+## Playing the obtained sound finally
+
+song = AudioSegment.from_wav("output/japaneseAudio.wav")
+play(song)
+
