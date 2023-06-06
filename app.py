@@ -27,7 +27,7 @@ if not os.path.exists(path):
 
 ##------------------------------------------------------------------------
 ## Setting up OpenAI API Key
-openai.api_key = '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'
+openai.api_key = 'YOUR API KEY HERE'
 
 
 ##------------------------------------------------------------------------
