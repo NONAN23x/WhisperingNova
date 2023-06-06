@@ -62,7 +62,7 @@ def record_audio(filename, duration):
 
 # Specify the filename and duration of the recording
 filename = 'output/recorded_audio.wav'
-duration = 6  # in seconds
+duration = 7  # in seconds
 
 # Call the record_audio function
 record_audio(filename, duration)
@@ -71,23 +71,49 @@ record_audio(filename, duration)
 ##------------------------------------------------------------------------
 ## Send the Audio file to WhisperAI for  further processing
 
+def processAudio(audio_file):
+    
+    try:
+        transcript = openai.Audio.transcribe("whisper-1", audio_file)
+    except:
+        print("You need a working API Key")
+
 audio_file = open("output/recorded_audio.wav", "rb")
-transcript = openai.Audio.transcribe("whisper-1", audio_file)
+
+# Send audio file to WhisperAI for audio processing
+processAudio(audio_file)
 
 
 ##------------------------------------------------------------------------
 ## Try creating a file to save the recorded text
-try:
-    # Open the file in write mode
-    file = open("output/audioTranscription.txt", "w")
 
-    # Write the string to the file
-    string_to_write = transcript["text"]
-    file.write(string_to_write)
+def createTextFile(file):
+    try:
+        # Open the file in write mode
+        
 
-    # Close the file
-    file.close()
-except:
-    print("There was an error creating your file")
+        # Write the string to the file
+        string_to_write = transcript["text"]
+        file.write(string_to_write)
 
-print("hello, world")
+        # Close the file
+        file.close()
+    except:
+        print("There was an error creating your file")
+
+file = open("output/audioTranscription.txt", "w")
+
+# store the recieved transcript in a text file
+createTextFile(file)
+file.close()
+
+
+##------------------------------------------------------------------------
+## Now send the transcript ot DeepL Translate
+
+def translateToJapanese(file):
+    ## translates
+    print('hello')
+
+file = open("output/audioTranscription.txt", "r")
+translateToJapanese(file)
