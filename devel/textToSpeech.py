@@ -3,6 +3,7 @@
 import requests
 from pydub import AudioSegment
 from pydub.playback import play
+import urllib
 
 ##------------------------------------------------------------------------
 ## send the text to VoiceVox and recieve japanese output
