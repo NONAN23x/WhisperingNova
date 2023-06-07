@@ -29,3 +29,4 @@ pip install -r requirements.txt
 ```
 openai.api_key = 'YOUR OPENAI API KEY HERE'
 ```
+Recommended way is to store your API key in your environment variables
