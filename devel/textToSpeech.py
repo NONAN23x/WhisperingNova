@@ -1,9 +1,16 @@
 #!/bin/python
 
+import time
 import requests
 from pydub import AudioSegment
 from pydub.playback import play
 import urllib
+
+
+##------------------------------------------------------------------------
+## Calculating the time required to run this code
+
+startTime = time.time()
 
 ##------------------------------------------------------------------------
 ## send the text to VoiceVox and recieve japanese output
@@ -20,10 +27,11 @@ def speak(sentence):
     params_encoded  = urllib.parse.urlencode({'text': sentence, 'speaker': speaker_id})
     r = requests.post(f'{base_url}/audio_query?{params_encoded}')
     voicevox_query = r.json()
-    voicevox_query['volumeScale'] = 4.0
-    voicevox_query['intonationScale'] = 1.5
-    voicevox_query['prePhonemeLength'] = 1.0
-    voicevox_query['postPhonemeLength'] = 1.0
+    voicevox_query['volumeScale'] = 4.5
+    voicevox_query['intonationScale'] = 2.5
+    voicevox_query['prePhonemeLength'] = 0.1
+    voicevox_query['postPhonemeLength'] = 0.3
+    voicevox_query['speedScale'] = 0.8
 
     # syntesize voice as wav file
     params_encoded = urllib.parse.urlencode({'speaker': speaker_id})
@@ -32,8 +40,8 @@ def speak(sentence):
     with open("output/japaneseAudio.wav", 'wb') as outfile:
         outfile.write(r.content)
 
-sentence = open()
-speak(sentence)
+sentence = open('output/audioTranslation.txt', 'r')
+speak(sentence.read())
 
 
 ##------------------------------------------------------------------------
@@ -41,3 +49,13 @@ speak(sentence)
 
 song = AudioSegment.from_wav("output/japaneseAudio.wav")
 play(song)
+
+
+##------------------------------------------------------------------------
+## Calculating the time required to run this code
+
+endTime = time.time()
+
+totalTime =  abs(endTime - startTime)
+
+print(f"Program has taken {totalTime} seconds to run")
