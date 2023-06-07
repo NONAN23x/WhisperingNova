@@ -2,4 +2,5 @@
 # use pip install -r requirements to install dependencies
 requests
 openai
-pyaudio
+sounddevice
+soundfile

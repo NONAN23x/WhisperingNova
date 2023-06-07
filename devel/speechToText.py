@@ -3,7 +3,7 @@
 ## Testing out different parts of code seperate to figure out sutff and cut down 
 ## transaction times
 
-import pyaudio
+import sounddevice as sd
 import openai
 import wave
 import sys
@@ -38,37 +38,23 @@ openai.api_key = os.environ['OPENAIKEY']
 
 def record_audio(filename, duration):
     chunk = 1024
-    format = pyaudio.paInt16
+    format = 'int16'
     channels = 1
     rate = 44100
-    audio = pyaudio.PyAudio()
-    stream = audio.open(format=format, channels=channels,
-                        rate=rate, input=True,
-                        frames_per_buffer=chunk)
-    
-    # Removing random text before output
-    if (sys.platform == 'linux'):
-        os.system('clear')
-    else:
-        os.system('cls')
+
+    os.system('')  # Clear the console
 
     print("Recording started...")
-    frames = []
-    for i in range(int(rate / chunk * duration)):
-        data = stream.read(chunk)
-        frames.append(data)
+    frames = sd.rec(int(duration * rate), samplerate=rate, channels=channels, dtype=format)
+    sd.wait()
     print("Recording completed.")
-
-    stream.stop_stream()
-    stream.close()
-    audio.terminate()
 
     # Save the recorded audio to a file
     wf = wave.open(filename, 'wb')
     wf.setnchannels(channels)
-    wf.setsampwidth(audio.get_sample_size(format))
+    wf.setsampwidth(2)  # 2 bytes for 'int16' format
     wf.setframerate(rate)
-    wf.writeframes(b''.join(frames))
+    wf.writeframes(frames.tobytes())
     wf.close()
 
 # Specify the filename and duration of the recording

@@ -2,8 +2,8 @@
 
 import time
 import requests
-from pydub import AudioSegment
-from pydub.playback import play
+import sounddevice as sd
+import soundfile as sf
 import urllib
 
 
@@ -23,7 +23,7 @@ def speak(sentence):
     #specify base url
     base_url = "http://127.0.0.1:50021"
     # generate initial query
-    speaker_id = '14'
+    speaker_id = '10'
     params_encoded  = urllib.parse.urlencode({'text': sentence, 'speaker': speaker_id})
     r = requests.post(f'{base_url}/audio_query?{params_encoded}')
     voicevox_query = r.json()
@@ -47,8 +47,16 @@ speak(sentence.read())
 ##------------------------------------------------------------------------
 ## Playing the obtained sound finally
 
-song = AudioSegment.from_wav("output/japaneseAudio.wav")
-play(song)
+def play_wav(filename):
+    data, samplerate = sf.read(filename)
+    sd.play(data, samplerate)
+    sd.wait()
+
+# Specify the filename of the WAV file to play
+filename = 'output/japaneseAudio.wav'
+
+# Play the WAV file
+play_wav(filename)
 
 
 ##------------------------------------------------------------------------

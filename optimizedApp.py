@@ -5,18 +5,18 @@
 ## Project Start Date: 5/6/2023
 
 
+##------------------------------------------------------------------------
 ## Import Modules
 import time
 import sys
 import os
 import requests
 import openai
-import pyaudio
+import sounddevice as sd
+import soundfile as sf
 import wave
 import urllib
 import re
-from pydub import AudioSegment
-from pydub.playback import play
 
 
 ##------------------------------------------------------------------------
@@ -35,39 +35,26 @@ openai.api_key = os.environ['OPENAIKEY']
 
 ##------------------------------------------------------------------------
 ## Save recorded audio to a file
+
 def record_audio(filename, duration):
     chunk = 1024
-    format = pyaudio.paInt16
+    format = 'int16'
     channels = 1
     rate = 44100
-    audio = pyaudio.PyAudio()
-    stream = audio.open(format=format, channels=channels,
-                        rate=rate, input=True,
-                        frames_per_buffer=chunk)
-    
-    # Removing random text before output
-    if (sys.platform == 'linux'):
-        os.system('clear')
-    else:
-        os.system('cls')
+
+    os.system('')  # Clear the console
 
     print("Recording started...")
-    frames = []
-    for i in range(int(rate / chunk * duration)):
-        data = stream.read(chunk)
-        frames.append(data)
+    frames = sd.rec(int(duration * rate), samplerate=rate, channels=channels, dtype=format)
+    sd.wait()
     print("Recording completed.")
-
-    stream.stop_stream()
-    stream.close()
-    audio.terminate()
 
     # Save the recorded audio to a file
     wf = wave.open(filename, 'wb')
     wf.setnchannels(channels)
-    wf.setsampwidth(audio.get_sample_size(format))
+    wf.setsampwidth(2)  # 2 bytes for 'int16' format
     wf.setframerate(rate)
-    wf.writeframes(b''.join(frames))
+    wf.writeframes(frames.tobytes())
     wf.close()
 
 # Specify the filename and duration of the recording
@@ -106,14 +93,16 @@ transcript = processAudio(audio_file)
 ##------------------------------------------------------------------------
 ## Send the transcript to OpenAI to recieve the translated text
 
+system_message = {"role": "system", "content": "You are a helpful assistant that translates text."}
+
 def translate_text(text, source_language, target_language):
     prompt = f"Translate the following '{source_language}' text to '{target_language}': {text}"
 
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "You are a helpful assistant that translates text."},
-            {"role": "user", "content": prompt}
+            system_message,
+            {"role": "user", "content": prompt + "\n\n I only want the Japanese Text, sound like a anime girl."}
         ],
         max_tokens=150,
         n=1,
@@ -122,9 +111,9 @@ def translate_text(text, source_language, target_language):
     )
 
     translation = response.choices[0].message.content.strip()
+    translation = re.sub(r'\(.*', '', translation)
     return translation
 
-japaneseText = translate_text(transcript, "English", "Japanese")
 
 def extract_text(json_data):
     pattern = r'"text"\s*:\s*"([^"]*)"'
@@ -137,12 +126,13 @@ def extract_text(json_data):
 
     return text
 
+japaneseText = translate_text(transcript, "English", "Japanese")
+
 sentence = extract_text(japaneseText)
-print(sentence)
 
 
 ##------------------------------------------------------------------------
-## send the text to VoiceVox and recieve japanese output
+## send the text to VoiceVox and receive japanese output
 ##------------------------------------------------------------------------
 ## Make Sure Docker is up and RUNNING!!!
 
@@ -153,7 +143,7 @@ def store_response(sentence):
     #specify base url
     base_url = "http://127.0.0.1:50021"
     # generate initial query
-    speaker_id = '14'
+    speaker_id = '10'
     params_encoded  = urllib.parse.urlencode({'text': sentence, 'speaker': speaker_id})
     r = requests.post(f'{base_url}/audio_query?{params_encoded}')
     voicevox_query = r.json()
@@ -176,8 +166,16 @@ store_response(sentence)
 ##------------------------------------------------------------------------
 ## Playing the obtained sound finally
 
-japaneseAudio = AudioSegment.from_wav("output/japaneseAudio.wav")
-play(japaneseAudio)
+def play_wav(filename):
+    data, samplerate = sf.read(filename)
+    sd.play(data, samplerate)
+    sd.wait()
+
+# Specify the filename of the WAV file to play
+filename = 'output/japaneseAudio.wav'
+
+# Play the WAV file
+play_wav(filename)
 
 
 ##------------------------------------------------------------------------
