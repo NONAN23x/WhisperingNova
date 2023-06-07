@@ -1,5 +1,5 @@
-# WhisperingNova
-An AI voice changer harnessing the power of OpenAI and VoiceVox for seamless voice transformation with a touch of anime flair
+# Optimization Branch!
+this is considered the bleeding-edge version of the stable(main) branch, commits here are more frequent and may require latest software
 
 ## Purpose
 WhisperingNova is an extraordinary project that aims to revolutionize voice modulation in the realm of anime. It offers a unique and immersive experience by enabling users to effortlessly transform their voices into captivating anime-style renditions
@@ -31,5 +31,9 @@ openai.api_key = 'YOUR OPENAI API KEY HERE'
 ```
 #### Recommended way is to store your API key in your environment variables, refer [wiki](https://github.com/NONAN23x/WhisperingNova/wiki#linux)
 
+## What is the program doing?
+
+
 ## Bugs and Issues
 Please report your findings at [issues](https://github.com/NONAN23x/WhisperingNova/issues)
+
