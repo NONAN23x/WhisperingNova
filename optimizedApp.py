@@ -3,7 +3,6 @@
 ## WhisperingNova
 ## Author: NONAN23x
 ## Project Start Date: 5/6/2023
-##
 
 
 ## Import Modules
@@ -89,10 +88,10 @@ startTime = time.time()
 ## Send the Audio file to WhisperAI for  further processing
 
 def processAudio(audio_file):
-    # set the global variable
-    global transcript
+
     try:
         transcript = openai.Audio.transcribe("whisper-1", audio_file)
+        return transcript
     except:
         print("You need a working API Key")
         print("Exiting...")
@@ -101,34 +100,11 @@ def processAudio(audio_file):
 audio_file = open("output/recorded_audio.wav", "rb")
 
 # Send audio file to WhisperAI for audio processing
-processAudio(audio_file)
+transcript = processAudio(audio_file)
 
 
 ##------------------------------------------------------------------------
-## Try creating a file to save the recorded text
-
-def createTextFile(file, transcript):
-    try:
-        # Write the string to the file
-        string_to_write = transcript["text"]
-        file.write(string_to_write)
-
-        # Close the file
-        file.close()
-    except:
-        print("There was an error creating your file")
-        print("Exiting...")
-        sys.exit(0)
-
-# Open the file in write mode
-file = open("output/audioTranscription.txt", "w")
-
-# store the recieved transcript in a text file
-createTextFile(file, transcript)
-
-
-##------------------------------------------------------------------------
-## Send the transcript to an AI to recieve the translated text
+## Send the transcript to OpenAI to recieve the translated text
 
 def translate_text(text, source_language, target_language):
     prompt = f"Translate the following '{source_language}' text to '{target_language}': {text}"
@@ -171,7 +147,8 @@ print(sentence)
 ## Make Sure Docker is up and RUNNING!!!
 
 # instantiate a audio file
-def speak(sentence):
+
+def store_response(sentence):
 
     #specify base url
     base_url = "http://127.0.0.1:50021"
@@ -193,7 +170,7 @@ def speak(sentence):
     with open("output/japaneseAudio.wav", 'wb') as outfile:
         outfile.write(r.content)
 
-speak(sentence)
+store_response(sentence)
 
 
 ##------------------------------------------------------------------------
