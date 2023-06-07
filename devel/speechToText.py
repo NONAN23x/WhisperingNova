@@ -1,27 +1,25 @@
-#!/usr/bin/python
+#!/bin/python
 
-## WhisperingNova
-## Author: NONAN23x
-## Project Start Date: 5/6/2023
-##
+## Testing out different parts of code seperate to figure out sutff and cut down 
+## transaction times
 
-
-## Import Modules
-import time
+import pyaudio
+import openai
+import wave
 import sys
 import os
-import requests
-import openai
-import pyaudio
-import wave
-import urllib
-import re
-from pydub import AudioSegment
-from pydub.playback import play
+import time
 
 
 ##------------------------------------------------------------------------
-## Setting up output directory
+## Calculating the time required to run this code
+
+startTime = time.time()
+
+
+##------------------------------------------------------------------------
+## setup a output directory in this sub directory
+
 workingDirectory = os.getcwd()
 outputDir = 'output'
 path = os.path.join(workingDirectory, outputDir)
@@ -30,12 +28,14 @@ if not os.path.exists(path):
 
 
 ##------------------------------------------------------------------------
-## Setting up OpenAI API Key
+## setting up OpenAI Authentication
+
 openai.api_key = os.environ['OPENAIKEY']
 
 
 ##------------------------------------------------------------------------
-## Save recorded audio to a file
+## record audio from the mic
+
 def record_audio(filename, duration):
     chunk = 1024
     format = pyaudio.paInt16
@@ -80,12 +80,6 @@ record_audio(filename, duration)
 
 
 ##------------------------------------------------------------------------
-## Runtime calculation start
-
-startTime = time.time()
-
-
-##------------------------------------------------------------------------
 ## Send the Audio file to WhisperAI for  further processing
 
 def processAudio(audio_file):
@@ -126,87 +120,13 @@ file = open("output/audioTranscription.txt", "w")
 # store the recieved transcript in a text file
 createTextFile(file, transcript)
 
+print(transcript['text'])
 
 ##------------------------------------------------------------------------
-## Send the transcript to an AI to recieve the translated text
-
-def translate_text(text, source_language, target_language):
-    prompt = f"Translate the following '{source_language}' text to '{target_language}': {text}"
-
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system", "content": "You are a helpful assistant that translates text."},
-            {"role": "user", "content": prompt}
-        ],
-        max_tokens=150,
-        n=1,
-        stop=None,
-        temperature=0.5,
-    )
-
-    translation = response.choices[0].message.content.strip()
-    return translation
-
-japaneseText = translate_text(transcript, "English", "Japanese")
-
-def extract_text(json_data):
-    pattern = r'"text"\s*:\s*"([^"]*)"'
-    match = re.search(pattern, json_data)
-
-    if match:
-        text = match.group(1)
-    else:
-        text = ""
-
-    return text
-
-sentence = extract_text(japaneseText)
-print(sentence)
-
-
-##------------------------------------------------------------------------
-## send the text to VoiceVox and recieve japanese output
-##------------------------------------------------------------------------
-## Make Sure Docker is up and RUNNING!!!
-
-# instantiate a audio file
-def speak(sentence):
-
-    #specify base url
-    base_url = "http://127.0.0.1:50021"
-    # generate initial query
-    speaker_id = '14'
-    params_encoded  = urllib.parse.urlencode({'text': sentence, 'speaker': speaker_id})
-    r = requests.post(f'{base_url}/audio_query?{params_encoded}')
-    voicevox_query = r.json()
-    voicevox_query['volumeScale'] = 4.0
-    voicevox_query['intonationScale'] = 1.5
-    voicevox_query['prePhonemeLength'] = 1.0
-    voicevox_query['postPhonemeLength'] = 1.0
-
-    # syntesize voice as wav file
-    params_encoded = urllib.parse.urlencode({'speaker': speaker_id})
-    r = requests.post(f'{base_url}/synthesis?{params_encoded}', json=voicevox_query)
-
-    with open("output/japaneseAudio.wav", 'wb') as outfile:
-        outfile.write(r.content)
-
-speak(sentence)
-
-
-##------------------------------------------------------------------------
-## Playing the obtained sound finally
-
-japaneseAudio = AudioSegment.from_wav("output/japaneseAudio.wav")
-play(japaneseAudio)
-
-
-##------------------------------------------------------------------------
-## Runtime calculation
+## Calulating the time taken to reach here
 
 endTime = time.time()
 
 timeTaken = endTime - startTime
 
-print(f"Program took {timeTaken} seconds")
+print(f"Program took {timeTaken}s")
