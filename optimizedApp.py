@@ -21,6 +21,7 @@ import re
 
 ##------------------------------------------------------------------------
 ## Setting up output directory
+
 workingDirectory = os.getcwd()
 outputDir = 'output'
 path = os.path.join(workingDirectory, outputDir)
@@ -30,6 +31,7 @@ if not os.path.exists(path):
 
 ##------------------------------------------------------------------------
 ## Setting up OpenAI API Key
+
 openai.api_key = os.environ['OPENAIKEY']
 
 
@@ -38,28 +40,41 @@ openai.api_key = os.environ['OPENAIKEY']
 
 def record_audio(filename, duration):
     chunk = 1024
-    format = 'int16'
+    format = pyaudio.paInt16
     channels = 1
     rate = 44100
 
-    os.system('')  # Clear the console
+    audio = pyaudio.PyAudio()
+
+    stream = audio.open(format=format, channels=channels,
+                        rate=rate, input=True,
+                        frames_per_buffer=chunk)
 
     print("Recording started...")
-    frames = sd.rec(int(duration * rate), samplerate=rate, channels=channels, dtype=format)
-    sd.wait()
+
+    frames = []
+
+    for i in range(int(rate / chunk * duration)):
+        data = stream.read(chunk)
+        frames.append(data)
+
     print("Recording completed.")
+
+    stream.stop_stream()
+    stream.close()
+    audio.terminate()
 
     # Save the recorded audio to a file
     wf = wave.open(filename, 'wb')
     wf.setnchannels(channels)
-    wf.setsampwidth(2)  # 2 bytes for 'int16' format
+    wf.setsampwidth(audio.get_sample_size(format))
     wf.setframerate(rate)
-    wf.writeframes(frames.tobytes())
+    wf.writeframes(b''.join(frames))
     wf.close()
 
 # Specify the filename and duration of the recording
-filename = 'output/recorded_audio.wav'
-duration = 4  # in seconds
+filename = 'recorded_audio.wav'
+duration = 5  # in seconds
 
 # Call the record_audio function
 record_audio(filename, duration)
