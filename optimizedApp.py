@@ -76,7 +76,7 @@ def record_audio(filename, duration):
 
 # Specify the filename and duration of the recording
 filename = 'output/recorded_audio.wav'
-duration = 5  # in seconds
+duration = 6  # in seconds
 
 # Call the record_audio function
 record_audio(filename, duration)
@@ -106,6 +106,8 @@ audio_file = open(filename, "rb")
 # Send audio file to WhisperAI for audio processing
 transcript = processAudio(audio_file)
 
+print(transcript)
+
 
 ##------------------------------------------------------------------------
 ## Send the transcript to OpenAI to recieve the translated text
@@ -131,21 +133,7 @@ def translate_text(text, source_language, target_language):
     translation = re.sub(r'\(.*', '', translation)
     return translation
 
-
-def extract_text(json_data):
-    pattern = r'"text"\s*:\s*"([^"]*)"'
-    match = re.search(pattern, json_data)
-
-    if match:
-        text = match.group(1)
-    else:
-        text = ""
-
-    return text
-
 japaneseText = translate_text(transcript, "English", "Japanese")
-
-sentence = extract_text(japaneseText)
 
 
 ##------------------------------------------------------------------------
@@ -177,7 +165,7 @@ def store_response(sentence):
     with open("output/japaneseAudio.wav", 'wb') as outfile:
         outfile.write(r.content)
 
-store_response(sentence)
+store_response(japaneseText)
 
 
 ##------------------------------------------------------------------------
