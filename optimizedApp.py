@@ -76,7 +76,7 @@ def record_audio(filename, duration):
 
 # Specify the filename and duration of the recording
 filename = 'output/recorded_audio.wav'
-duration = 6  # in seconds
+duration = 4  # in seconds
 
 # Call the record_audio function
 record_audio(filename, duration)
