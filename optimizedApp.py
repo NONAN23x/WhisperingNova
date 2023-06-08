@@ -18,6 +18,7 @@ import soundfile as sf
 import wave
 import urllib
 import re
+import pyaudio
 
 
 ##------------------------------------------------------------------------
@@ -74,7 +75,7 @@ def record_audio(filename, duration):
     wf.close()
 
 # Specify the filename and duration of the recording
-filename = os.path.join(path, 'recorded_audio.wav')
+filename = 'output/recorded_audio.wav'
 duration = 5  # in seconds
 
 # Call the record_audio function
