@@ -7,6 +7,7 @@
 
 ##------------------------------------------------------------------------
 ## Import Modules
+
 import time
 import sys
 import os
@@ -73,7 +74,7 @@ def record_audio(filename, duration):
     wf.close()
 
 # Specify the filename and duration of the recording
-filename = 'recorded_audio.wav'
+filename = os.path.join(path, 'recorded_audio.wav')
 duration = 5  # in seconds
 
 # Call the record_audio function
@@ -99,7 +100,7 @@ def processAudio(audio_file):
         print("Exiting...")
         sys.exit(0)
 
-audio_file = open("output/recorded_audio.wav", "rb")
+audio_file = open(filename, "rb")
 
 # Send audio file to WhisperAI for audio processing
 transcript = processAudio(audio_file)

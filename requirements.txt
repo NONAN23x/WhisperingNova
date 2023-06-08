@@ -4,3 +4,5 @@ requests
 openai
 sounddevice
 soundfile
+pyaudio
+keyboard
