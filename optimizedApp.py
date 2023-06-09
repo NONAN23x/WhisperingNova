@@ -76,7 +76,7 @@ def record_audio(filename, duration):
 
 # Specify the filename and duration of the recording
 filename = 'output/recorded_audio.wav'
-duration = 4  # in seconds
+duration = 5  # in seconds
 
 # Call the record_audio function
 record_audio(filename, duration)
@@ -91,21 +91,16 @@ startTime = time.time()
 ##------------------------------------------------------------------------
 ## Send the Audio file to WhisperAI for  further processing
 
-def processAudio(audio_file):
+def make_asr_request(audio_file):
+    base_url = 'http://localhost:9000'
+    with open(filename, 'rb') as f:
+        file = {'audio_file': f}
+        r = requests.post(f'{base_url}/asr?task=transcribe&language=en&encode=true&output=json', files=file)
 
-    try:
-        transcript = openai.Audio.transcribe("whisper-1", audio_file)
-        return transcript
-    except:
-        print("You need a working API Key")
-        print("Exiting...")
-        sys.exit(0)
-
-audio_file = open(filename, "rb")
+    return r.json()['text']
 
 # Send audio file to WhisperAI for audio processing
-transcript = processAudio(audio_file)
-
+transcript = make_asr_request(filename)
 print(transcript)
 
 
@@ -135,6 +130,7 @@ def translate_text(text, source_language, target_language):
 
 japaneseText = translate_text(transcript, "English", "Japanese")
 
+print(japaneseText)
 
 ##------------------------------------------------------------------------
 ## send the text to VoiceVox and receive japanese output
@@ -155,8 +151,8 @@ def store_response(sentence):
     voicevox_query['volumeScale'] = 4.5
     voicevox_query['intonationScale'] = 2.5
     voicevox_query['prePhonemeLength'] = 0.1
-    voicevox_query['postPhonemeLength'] = 0.3
-    voicevox_query['speedScale'] = 0.8
+    voicevox_query['postPhonemeLength'] = 0.2
+    voicevox_query['speedScale'] = 0.84
 
     # syntesize voice as wav file
     params_encoded = urllib.parse.urlencode({'speaker': speaker_id})
