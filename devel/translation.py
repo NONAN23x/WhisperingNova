@@ -7,7 +7,8 @@ import openai
 import sys
 import os
 import time
-import re
+import requests
+import json
 
 
 ##------------------------------------------------------------------------
@@ -29,27 +30,17 @@ openai.api_key = os.environ['OPENAIKEY']
 ##------------------------------------------------------------------------
 ## Send the transcript to OpenAI to recieve the translated text
 
-system_message = {"role": "system", "content": "You are a helpful assistant that translates text."}
+def make_deep_translate(text):
+    base_url = 'http://localhost:8080'
+    data = {"text": text,
+                "source_lang": "EN",
+                "target_lang": "JA"}
+    jsonData = json.dumps(data)
+    print(jsonData)
+    r = requests.post(f'{base_url}/translate', data=jsonData)
 
-
-def translate_text(text, source_language, target_language):
-    prompt = f"Translate the following '{source_language}' text to '{target_language}': {text}"
-
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            system_message,
-            {"role": "user", "content": prompt + "\n\n I only want the Japanese Text, sound like a anime girl."}
-        ],
-        max_tokens=150,
-        n=1,
-        stop=None,
-        temperature=0.5,
-    )
-
-    translation = response.choices[0].message.content.strip()
-    translation = re.sub(r'\(.*', '', translation)
-    return translation
+    
+    return r.json()['data']
 
 transcript = str(input("Enter the text: "))
 
@@ -60,7 +51,7 @@ transcript = str(input("Enter the text: "))
 startTime = time.time()
 
 
-japaneseText = translate_text(transcript, "English", "Japanese")
+japaneseText = make_deep_translate(transcript)
 
 print(japaneseText)
 

@@ -9,15 +9,13 @@
 ## Import Modules
 
 import time
-import sys
 import os
 import requests
-import openai
 import sounddevice as sd
 import soundfile as sf
 import wave
 import urllib
-import re
+import json
 import pyaudio
 
 
@@ -29,12 +27,6 @@ outputDir = 'output'
 path = os.path.join(workingDirectory, outputDir)
 if not os.path.exists(path):
     os.makedirs(path)
-
-
-##------------------------------------------------------------------------
-## Setting up OpenAI API Key
-
-openai.api_key = os.environ['OPENAIKEY']
 
 
 ##------------------------------------------------------------------------
@@ -105,37 +97,25 @@ print(transcript)
 
 
 ##------------------------------------------------------------------------
-## Send the transcript to OpenAI to recieve the translated text
+## Send the transcript to DeepL to recieve the translated text
 
-system_message = {"role": "system", "content": "You are a helpful assistant that translates text."}
+def make_deep_translate(text):
+    base_url = 'http://localhost:8080'
+    data = {"text": text,
+                "source_lang": "EN",
+                "target_lang": "JA"}
+    jsonData = json.dumps(data)
+    
+    r = requests.post(f'{base_url}/translate', data=jsonData)
 
-def translate_text(text, source_language, target_language):
-    prompt = f"Translate the following '{source_language}' text to '{target_language}': {text}"
+    return r.json()['data']
 
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            system_message,
-            {"role": "user", "content": prompt + "\n\n I only want the Japanese Text, sound like a anime girl."}
-        ],
-        max_tokens=150,
-        n=1,
-        stop=None,
-        temperature=0.5,
-    )
-
-    translation = response.choices[0].message.content.strip()
-    translation = re.sub(r'\(.*', '', translation)
-    return translation
-
-japaneseText = translate_text(transcript, "English", "Japanese")
+japaneseText = make_deep_translate(transcript)
 
 print(japaneseText)
 
 ##------------------------------------------------------------------------
 ## send the text to VoiceVox and receive japanese output
-##------------------------------------------------------------------------
-## Make Sure Docker is up and RUNNING!!!
 
 # instantiate a audio file
 
@@ -147,16 +127,16 @@ def store_response(sentence):
     speaker_id = '10'
     params_encoded  = urllib.parse.urlencode({'text': sentence, 'speaker': speaker_id})
     r = requests.post(f'{base_url}/audio_query?{params_encoded}')
-    voicevox_query = r.json()
-    voicevox_query['volumeScale'] = 4.5
-    voicevox_query['intonationScale'] = 2.5
-    voicevox_query['prePhonemeLength'] = 0.1
-    voicevox_query['postPhonemeLength'] = 0.2
-    voicevox_query['speedScale'] = 0.84
+    voiceVox = r.json()
+    voiceVox['volumeScale'] = 4.0
+    voiceVox['intonationScale'] = 2.5
+    voiceVox['prePhonemeLength'] = 0.1
+    voiceVox['postPhonemeLength'] = 0.2
+    voiceVox['speedScale'] = 0.84
 
-    # syntesize voice as wav file
+    # making the api request
     params_encoded = urllib.parse.urlencode({'speaker': speaker_id})
-    r = requests.post(f'{base_url}/synthesis?{params_encoded}', json=voicevox_query)
+    r = requests.post(f'{base_url}/synthesis?{params_encoded}', json=voiceVox)
 
     with open("output/japaneseAudio.wav", 'wb') as outfile:
         outfile.write(r.content)
@@ -186,4 +166,4 @@ endTime = time.time()
 
 timeTaken = endTime - startTime
 
-print(f"Program took {timeTaken} seconds")
+print(f"Program took {abs(timeTaken)} seconds")

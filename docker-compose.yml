@@ -14,3 +14,9 @@ services:
       - ASR_MODEL=base
       - ASR_ENGINE=openai_whisper
     restart: unless-stopped
+
+  deepl:
+    image: zu1k/deepl
+    ports:
+      - '8080:80'
+    restart: unless-stopped
