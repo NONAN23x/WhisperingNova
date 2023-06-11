@@ -1,3 +1,5 @@
+![alt text](images/whisperingNova.png "WhisperingNova")
+
 # WhisperingNova
 An AI voice changer harnessing the power of OpenAI and VoiceVox for seamless voice transformation.
 
