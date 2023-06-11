@@ -1,0 +1,22 @@
+version: '3.8'
+services:
+  voicevox_engine:
+    image: voicevox/voicevox_engine:cpu-ubuntu20.04-latest
+    ports:
+      - '127.0.0.1:50021:50021'
+    restart: unless-stopped
+
+  openai_whisper:
+    image: onerahmet/openai-whisper-asr-webservice:latest
+    ports:
+      - '9000:9000'
+    environment:
+      - ASR_MODEL=base
+      - ASR_ENGINE=openai_whisper
+    restart: unless-stopped
+
+  deepl:
+    image: zu1k/deepl
+    ports:
+      - '8080:80'
+    restart: unless-stopped
