@@ -1,9 +1,10 @@
 #!/usr/bin/python
 
+
 ## WhisperingNova
 ## Author: NONAN23x
 ## Project Start Date: 5/6/2023
-
+## VERSION: 1.0
 
 ##------------------------------------------------------------------------
 ## Import Modules
