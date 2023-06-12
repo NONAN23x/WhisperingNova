@@ -18,20 +18,7 @@ WhisperingNova is an extraordinary project that aims to revolutionize voice modu
 ## Applicability
 WhisperingNova falls under the category of Entertainment/Arts, offering a unique and immersive voice transformation experience. Whether you are an aspiring VTuber, an anime enthusiast, or a gamer. WhisperingNova usage is simply a Voice Tranformation Service under fair usage.
 
-## Install steps
-- Clone the Repo
-```
-git clone https://github.com/WhisperingNova
-```
-- Install Python Dependencies
-```
-pip install -r requirements.txt
-```
-- Attach your OpenAI access token
-```
-openai.api_key = 'YOUR OPENAI API KEY HERE'
-```
-#### Recommended way is to store your API key in your environment variables, refer [wiki](https://github.com/NONAN23x/WhisperingNova/wiki#linux)
+## How to install
 
 ## How it works
 - This python program will attempt to record your mic for 5 seconds (this is hardcoded for now)
