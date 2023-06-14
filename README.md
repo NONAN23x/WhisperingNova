@@ -19,7 +19,7 @@ WhisperingNova is an extraordinary project that aims to revolutionize voice modu
 WhisperingNova falls under the category of Entertainment/Arts, offering a unique and immersive voice transformation experience. Whether you are an aspiring VTuber, an anime enthusiast, or a gamer. WhisperingNova usage is simply a Voice Tranformation Service under fair usage.
 
 ## How to install
-Head over to the [releases](https://github.com/NONAN23x/WhisperingNova/releases) section
+Read the [Installation Guide](https://github.com/NONAN23x/WhisperingNova/releases) section
 
 ## How it works
 [Read here](https://github.com/NONAN23x/WhisperingNova/wiki/How-does-it-work%3F)
