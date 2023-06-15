@@ -167,3 +167,5 @@ endTime = time.time()
 timeTaken = endTime - startTime
 
 print(f"Program took {abs(timeTaken)} seconds")
+
+input("Press enter to exit")
