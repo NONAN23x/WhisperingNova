@@ -72,13 +72,11 @@ filename = 'output/recorded_audio.wav'
 duration = 5  # in seconds
 
 # Call the record_audio function
-record_audio(filename, duration)
-
-
-##------------------------------------------------------------------------
-## Runtime calculation start
-
-startTime = time.time()
+try:
+    record_audio(filename, duration)
+except:
+    print('There was an error while recording your mic')
+    sys.exit(0)
 
 
 ##------------------------------------------------------------------------
@@ -93,7 +91,14 @@ def make_asr_request(audio_file):
     return r.json()['text']
 
 # Send audio file to WhisperAI for audio processing
-transcript = make_asr_request(filename)
+try:
+    global transcript
+    transcript = make_asr_request(filename)
+except:
+    print("Error while making request to Whisper AI,")
+    print("Do you have Docker Running?")
+    sys.exit(0)
+
 print(transcript)
 
 
@@ -111,7 +116,13 @@ def make_deep_translate(text):
 
     return r.json()['data']
 
-japaneseText = make_deep_translate(transcript)
+try:
+    global japaneseText
+    japaneseText = make_deep_translate(transcript)
+except:
+    print("Error when trying to reach DeepL")
+    print("Do you have docker running?")
+    sys.exit(0)
 
 print(japaneseText)
 
@@ -142,7 +153,12 @@ def store_response(sentence):
     with open("output/japaneseAudio.wav", 'wb') as outfile:
         outfile.write(r.content)
 
-store_response(japaneseText)
+try:
+    store_response(japaneseText)
+except:
+    print("Cannot communicate with VoiceVox...")
+    print("Do you have docker running?")
+    sys.exit(0)
 
 
 ##------------------------------------------------------------------------
@@ -157,14 +173,11 @@ def play_wav(filename):
 filename = 'output/japaneseAudio.wav'
 
 # Play the WAV file
-play_wav(filename)
+try:
+    play_wav(filename)
+except:
+    print("cannot play the audio")
+    print("File error")
+    sys.exit(0)
 
 
-##------------------------------------------------------------------------
-## Runtime calculation
-
-endTime = time.time()
-
-timeTaken = endTime - startTime
-
-print(f"Program took {abs(timeTaken)} seconds")
