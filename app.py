@@ -18,6 +18,7 @@ import wave
 import urllib
 import json
 import pyaudio
+import sys
 
 
 ##------------------------------------------------------------------------
