@@ -174,11 +174,9 @@ def play_wav(filename):
 filename = 'output/japaneseAudio.wav'
 
 # Play the WAV file
-try:
-    play_wav(filename)
-except:
-    print("cannot play the audio")
-    print("File error")
-    sys.exit(0)
 
+play_wav(filename)
+print("cannot play the audio")
+print("File error")
+sys.exit(0)
 
