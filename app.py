@@ -9,7 +9,6 @@
 ##------------------------------------------------------------------------
 ## Import Modules
 
-import time
 import os
 import requests
 import sounddevice as sd
@@ -174,9 +173,12 @@ def play_wav(filename):
 filename = 'output/japaneseAudio.wav'
 
 # Play the WAV file
-
-play_wav(filename)
-print("cannot play the audio")
-print("File error")
-sys.exit(0)
+try:
+    play_wav(filename)
+    input("Press Enter to exit")
+except:
+    print("Error wile playing the file, try choosing desktop as the destination folder during setup")
+    print("It also might be possible that you have removed your mic...")
+    input("Press Enter to Exit")
+    sys.exit(0)
 
