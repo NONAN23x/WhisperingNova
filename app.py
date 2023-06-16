@@ -179,6 +179,6 @@ try:
 except:
     print("Error wile playing the file, try choosing desktop as the destination folder during setup")
     print("It also might be possible that you have removed your mic...")
-    input("Press Enter to Exit")
+    input("Press Enter to Exit\n")
     sys.exit(0)
 
