@@ -9,6 +9,7 @@
 ##------------------------------------------------------------------------
 ## Import Modules
 
+import time
 import os
 import requests
 import sounddevice as sd
@@ -19,6 +20,11 @@ import json
 import pyaudio
 import sys
 
+##------------------------------------------------------------------------
+# WhisperingNova Version Display
+
+print("\n------ WhisperingNova (Version 2.0) ------\n")
+time.sleep(0.5)
 
 ##------------------------------------------------------------------------
 ## Setting up output directory
@@ -26,8 +32,13 @@ import sys
 workingDirectory = os.getcwd()
 outputDir = 'output'
 path = os.path.join(workingDirectory, outputDir)
-if not os.path.exists(path):
-    os.makedirs(path)
+
+# Creating output directory
+try:
+    if not os.path.exists(path):
+        os.makedirs(path)
+except OSError:
+    print(f"Error in creating directory: {OSError}")
 
 
 ##------------------------------------------------------------------------
@@ -97,8 +108,8 @@ try:
     transcript = make_asr_request(filename)
 except:
     print("Error while making request to Whisper AI,")
-    print("Do you have Docker Running?")
-    input("Press enter to exit\n")
+    print("Do you have Docker running?")
+    input("Press Enter to exit\n")
     sys.exit(0)
 
 print(transcript)
@@ -123,8 +134,8 @@ try:
     japaneseText = make_deep_translate(transcript)
 except:
     print("Error when trying to reach DeepL")
-    print("Do you have docker running?")
-    input("Press enter to exit\n")
+    print("Do you have Docker running?")
+    input("Press Enter to exit\n")
     sys.exit(0)
 
 print(japaneseText)
@@ -160,7 +171,7 @@ try:
     store_response(japaneseText)
 except:
     print("Cannot communicate with VoiceVox...")
-    print("Do you have docker running?")
+    print("Do you have Docker running?")
     input("Press Enter To exit\n")
     sys.exit(0)
 
@@ -181,10 +192,10 @@ try:
     play_wav(filename)
     input("Press Enter to exit")
 except sd.PortAudioError:
-    print("It also might be possible that you have removed your mic...")
-    input("Press Enter to Exit\n")
+    print("Error in detecting Audio Output Device")
+    input("Press Enter to exit\n")
     sys.exit(0)
 except PermissionError:
-    print("Error wile playing the file, try choosing desktop as the destination folder during setup")
-    input("Press enter to exit\n")
+    print("Error while playing the file, try choosing Desktop as the destination folder during setup")
+    input("Press Enter to exit\n")
     sys.exit(0)
