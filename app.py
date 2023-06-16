@@ -76,6 +76,7 @@ try:
     record_audio(filename, duration)
 except:
     print('There was an error while recording your mic')
+    input("Press Enter to exit")
     sys.exit(0)
 
 
@@ -97,6 +98,7 @@ try:
 except:
     print("Error while making request to Whisper AI,")
     print("Do you have Docker Running?")
+    input("Press enter to exit\n")
     sys.exit(0)
 
 print(transcript)
@@ -122,6 +124,7 @@ try:
 except:
     print("Error when trying to reach DeepL")
     print("Do you have docker running?")
+    input("Press enter to exit\n")
     sys.exit(0)
 
 print(japaneseText)
@@ -158,6 +161,7 @@ try:
 except:
     print("Cannot communicate with VoiceVox...")
     print("Do you have docker running?")
+    input("Press Enter To exit\n")
     sys.exit(0)
 
 
