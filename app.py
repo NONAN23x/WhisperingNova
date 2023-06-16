@@ -176,9 +176,11 @@ filename = 'output/japaneseAudio.wav'
 try:
     play_wav(filename)
     input("Press Enter to exit")
-except:
-    print("Error wile playing the file, try choosing desktop as the destination folder during setup")
+except sd.PortAudioError:
     print("It also might be possible that you have removed your mic...")
     input("Press Enter to Exit\n")
     sys.exit(0)
-
+except PermissionError:
+    print("Error wile playing the file, try choosing desktop as the destination folder during setup")
+    input("Press enter to exit\n")
+    sys.exit(0)
