@@ -1,10 +1,11 @@
 #!/usr/bin/python
 
 
+
 ## WhisperingNova
 ## Author: NONAN23x
 ## Project Start Date: 5/6/2023
-## VERSION: 1.0
+## VERSION: 1.39
 
 ##------------------------------------------------------------------------
 ## Import Modules
@@ -19,11 +20,6 @@ import urllib
 import json
 import pyaudio
 import sys
-
-##------------------------------------------------------------------------
-# WhisperingNova Version Display
-
-time.sleep(0.5)
 
 ##------------------------------------------------------------------------
 ## Setting up output directory
