@@ -1,0 +1,6 @@
+{
+    "docker_server_address": "127.0.0.1",
+    "whisper_ai_port_address": "",
+    "deepl_translator_port": ",",
+    "language_preference": "en"
+}
