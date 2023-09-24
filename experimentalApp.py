@@ -4,7 +4,7 @@
 ## WhisperingNova
 ## Author: NONAN23x
 ## Project Start Date: 5/6/2023
-## VERSION: 1.0
+## VERSION: 1.0.23 beta
 
 
 ##------------------------------------------------------------------------
@@ -22,9 +22,10 @@ import sys
 
 
 ##------------------------------------------------------------------------
-## Save recorded audio to a file
+## Function to save recorded audio to a file
     
 def record_audio(filename, duration):
+
     chunk = 1024
     format = pyaudio.paInt16
     channels = 1
@@ -53,21 +54,28 @@ def record_audio(filename, duration):
 
 
 ##------------------------------------------------------------------------
-## Send the Audio file to WhisperAI for  further processing
+## Send the Audio file to WhisperAI docker instance for further processing
 
-def make_asr_request(audio_file):
-    base_url = 'http://localhost:9000'
+def make_asr_request(audio_file, docker_addr, asr_port_addr, language='en'):
+
+    filename = audio_file
+    base_url = f'http://{docker_addr}:{asr_port_addr}'
+    print(base_url)
+
     with open(filename, 'rb') as f:
         file = {'audio_file': f}
-        r = requests.post(f'{base_url}/asr?task=transcribe&language=en&encode=true&output=json', files=file)
+        r = requests.post(f'{base_url}/asr?task=transcribe&language={language}&encode=true&output=json', files=file)
     return r.json()['text']
 
 
 ##------------------------------------------------------------------------
 ## Send the transcript to DeepL to recieve the translated text
 
-def make_deep_translate(text, source_lang="EN", target_lang="JA"):
-    base_url = 'http://localhost:8080'
+def make_deepl_translate(text, docker_addr, deepl_port_addr, source_lang="EN", target_lang="JA"):
+
+    base_url = f'http://{docker_addr}:{deepl_port_addr}'
+    print(base_url)
+
     data = {"text": text,
                 "source_lang": source_lang,
                 "target_lang": target_lang}
@@ -80,29 +88,31 @@ def make_deep_translate(text, source_lang="EN", target_lang="JA"):
 ## send the text to VoiceVox and receive japanese output
 
 # instantiate a audio file
-def store_response(sentence):
+def store_response(sentence, docker_addr, voicevox_port, speaker_id):
+
     #specify base url
-    base_url = "http://127.0.0.1:50021"
+    base_url = f"http://{docker_addr}:{voicevox_port}"
+
     # generate initial query
-    speaker_id = '10'
-    params_encoded  = urllib.parse.urlencode({'text': sentence, 'speaker': speaker_id})
+    speakerID = speaker_id
+    params_encoded  = urllib.parse.urlencode({'text': sentence, 'speaker': speakerID})
     r = requests.post(f'{base_url}/audio_query?{params_encoded}')
     voiceVox = r.json()
-    voiceVox['volumeScale'] = 4.0
+    voiceVox['volumeScale'] = 3.0
     voiceVox['intonationScale'] = 2.5
     voiceVox['prePhonemeLength'] = 0.1
     voiceVox['postPhonemeLength'] = 0.2
-    voiceVox['speedScale'] = 0.84
+    voiceVox['speedScale'] = 0.85
 
     # making the api request
-    params_encoded = urllib.parse.urlencode({'speaker': speaker_id})
+    params_encoded = urllib.parse.urlencode({'speaker': speakerID})
     r = requests.post(f'{base_url}/synthesis?{params_encoded}', json=voiceVox)
     with open("output/japaneseAudio.wav", 'wb') as outfile:
         outfile.write(r.content)
 
 
 ##------------------------------------------------------------------------
-## Playing the obtained sound finally
+## Finally, play the obtained sound
 
 def play_wav(filename):
     data, samplerate = sf.read(filename)
@@ -111,9 +121,33 @@ def play_wav(filename):
 
 
 ##------------------------------------------------------------------------
+## Configuration fetching
+
+def get_settings():
+    try:
+        with open('settings.json', 'r') as settings_file:
+            settings = json.load(settings_file)
+        return settings
+    except FileNotFoundError:
+        print("Settings file not found. Using default settings.")
+        return {
+            "docker_server_address": "127.0.0.1",
+            "source_language_preference": "EN",
+            "destination_language_preference": "JA",
+        }
+
+
+##------------------------------------------------------------------------
 ## Main code
 
 def main():
+
+    settings = get_settings()
+    server_addr = settings["docker_server_address"]
+    whisper = settings["whisper_ai_port"]
+    voicevox = settings["voicevox_port"]
+    deepl = settings['deepl_translator_port']
+
 
     # Creating output directory
     workingDirectory = os.getcwd()
@@ -129,6 +163,7 @@ def main():
     # Specify the filename and duration of the recording
     filename = 'output/recorded_audio.wav'
     duration = 5  # in seconds
+
     # Call the record_audio function
     try:
         record_audio(filename, duration)
@@ -140,7 +175,7 @@ def main():
     # Send audio file to WhisperAI for audio processing
     try:
         global transcript
-        transcript = make_asr_request(filename)
+        transcript = make_asr_request(filename, server_addr, whisper)
     except:
         print("Error while making request to Whisper AI,")
         print("Do you have Docker running?")
@@ -152,7 +187,7 @@ def main():
 
     try:
         global japaneseText
-        japaneseText = make_deep_translate(transcript)
+        japaneseText = make_deepl_translate(transcript, server_addr, deepl)
     except:
         print("Error when trying to reach DeepL")
         print("Do you have Docker running?")
@@ -161,7 +196,7 @@ def main():
     print(japaneseText)
 
     try:
-        store_response(japaneseText)
+        store_response(japaneseText, server_addr, voicevox, speaker_id=10)
     except:
         print("Cannot communicate with VoiceVox...")
         print("Do you have Docker running?")
@@ -179,11 +214,11 @@ def main():
         input("Press Enter to exit\n")
         sys.exit(0)
     except PermissionError:
-        print("Error while playing the file, try choosing Desktop as the destination folder during setup")
+        print("Run the script in its folder!!!")
         input("Press Enter to exit\n")
         sys.exit(0)    
 
 
 if __name__ == "__main__":
+    
     main()
-

@@ -1,7 +1,8 @@
 # python 3.11
 # use pip install -r requirements to install dependencies
+
 requests
-openai
+numpy
 sounddevice
 soundfile
 pyaudio
